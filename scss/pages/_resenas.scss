@@ -1,0 +1,40 @@
+// ============================================================
+// HOSTEL ITALIAN — Página: Reseñas
+// ============================================================
+@use '../variables' as *;
+
+.score-banner {
+  background: $green;
+  padding-block: 3rem;
+
+  &__inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.6rem;
+    text-align: center;
+  }
+
+  &__number {
+    font-family: $font-serif;
+    font-size: 5rem;
+    font-weight: 700;
+    color: $cream;
+    line-height: 1;
+  }
+
+  &__stars {
+    display: flex;
+    gap: 0.25rem;
+    color: $terracotta;
+
+    svg { width: 22px; height: 22px; fill: currentColor; }
+  }
+
+  &__label { font-size: 0.85rem; color: rgba($sand, 0.65); margin-top: 0.25rem; }
+}
+
+.reviews--page {
+  padding-block: $section-py;
+  background: $cream;
+}

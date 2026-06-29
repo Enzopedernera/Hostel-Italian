@@ -1,0 +1,48 @@
+// ============================================================
+// HOSTEL ITALIAN — Utilidades de accesibilidad y UX
+// ============================================================
+@use 'variables' as *;
+
+// ── SVG symbol definitions (invisible container) ──────────
+.svg-defs { display: none; }
+
+// ── Skip to content ────────────────────────────────────────
+.skip-link {
+  position: absolute;
+  top: -4rem;
+  left: 1rem;
+  z-index: 200;
+  background: $terracotta;
+  color: $white;
+  font-size: 0.9rem;
+  font-weight: 600;
+  padding: 0.6rem 1.25rem;
+  border-radius: $radius-sm;
+  transition: top 0.15s ease;
+  text-decoration: none;
+
+  &:focus {
+    top: 1rem;
+    outline: 2px solid $white;
+    outline-offset: 2px;
+  }
+}
+
+// ── Focus visible global ───────────────────────────────────
+:focus-visible {
+  outline: 2px solid $terracotta;
+  outline-offset: 3px;
+  border-radius: $radius-sm;
+}
+
+// ── Room option: focus de teclado en el radio input ────────
+.room-option:has(.room-option__input:focus-visible) {
+  outline: 2px solid $terracotta;
+  outline-offset: 2px;
+}
+
+// ── Placeholder de color en imágenes antes de cargar ──────
+.room-detail__main-img img,
+.room-detail__thumbs img {
+  background: $sand;
+}

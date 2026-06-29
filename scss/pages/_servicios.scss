@@ -1,0 +1,34 @@
+// ============================================================
+// HOSTEL ITALIAN — Página: Servicios
+// ============================================================
+@use '../variables' as *;
+
+.services--page {
+  background: $green;
+  padding-block: $section-py;
+
+  .services__grid--large {
+    grid-template-columns: repeat(4, 1fr);
+
+    @media (max-width: $bp-lg) { grid-template-columns: repeat(2, 1fr); }
+    @media (max-width: $bp-sm) { grid-template-columns: 1fr; }
+  }
+
+  .services__item--card {
+    background: rgba($white, 0.05);
+    border: 1px solid rgba($white, 0.08);
+    border-radius: $radius-sm;
+    padding: 2rem 1.5rem;
+
+    &:hover {
+      background: rgba($white, 0.1);
+      border-color: rgba($white, 0.14);
+    }
+
+    .services__desc {
+      color: rgba($sand, 0.72);
+      font-size: 0.85rem;
+      line-height: 1.6;
+    }
+  }
+}

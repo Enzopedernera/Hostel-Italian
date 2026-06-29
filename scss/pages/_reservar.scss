@@ -1,0 +1,642 @@
+// ============================================================
+// HOSTEL ITALIAN — Página: Reservar
+// Sistema de reservas: wizard multi-paso + calendario
+// ============================================================
+@use 'sass:color';
+@use '../variables' as *;
+
+// ── Wizard panel: reset del card reutilizado ───────────────
+.reservation__card--flat {
+  flex-direction: column;
+  padding: 0;
+  overflow: visible;
+  box-shadow: none;
+  background: transparent;
+  border: none;
+}
+
+// ── Títulos de sección dentro del wizard ───────────────────
+.wizard__section-title {
+  font-size: 1.3rem;
+  color: $green;
+  margin-bottom: 1.25rem;
+  font-family: $font-serif;
+
+  &--sm { margin-bottom: 1rem; }
+}
+
+// ── Wrap del selector de huéspedes ────────────────────────
+.wizard__guests-wrap {
+  margin-bottom: 1.5rem;
+  max-width: 240px;
+
+  label {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: $wood;
+    display: block;
+    margin-bottom: 0.4rem;
+  }
+
+  select {
+    width: 100%;
+    border: 1.5px solid $sand;
+    border-radius: $radius-sm;
+    padding: 0.8rem 1rem;
+    font-family: $font-sans;
+    font-size: 0.9rem;
+    color: $dark;
+    background: $white;
+    transition: border-color $transition, box-shadow $transition;
+    -webkit-appearance: none;
+    appearance: none;
+
+    &:focus {
+      outline: none;
+      border-color: $green;
+      box-shadow: 0 0 0 3px rgba($green, 0.1);
+    }
+  }
+}
+
+// ── Nota de campos obligatorios ────────────────────────────
+.wizard__required-note {
+  font-size: 0.78rem;
+  color: $wood;
+  margin-top: -0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+// ── Disclaimer de confirmación ─────────────────────────────
+.wizard__disclaimer {
+  font-size: 0.78rem;
+  color: $wood;
+  margin-top: 1rem;
+  text-align: center;
+  line-height: 1.6;
+}
+
+// ── Botón "Hacer otra reserva" ──────────────────────────────
+.wizard__reset-btn {
+  color: $terracotta;
+  font-weight: 600;
+  text-decoration: underline;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+// ── Reservation page extras ────────────────────────────────
+.reservation--page {
+  padding-block: $section-py;
+
+  .reservation__info { justify-content: space-between; }
+
+  .reservation__room-links {
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid rgba($white, 0.1);
+  }
+
+  .reservation__room-links-label {
+    font-size: 0.78rem;
+    color: rgba($sand, 0.5);
+    margin-bottom: 0.4rem;
+  }
+
+  .reservation__room-link {
+    font-size: 0.85rem;
+    color: rgba($sand, 0.85);
+    font-weight: 600;
+    transition: color $transition;
+
+    &:hover { color: $cream; }
+  }
+}
+
+// ── Wizard steps indicator ─────────────────────────────────
+.wizard {
+  padding-block: $section-py;
+  background: $sand;
+
+  &__steps {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 3rem;
+    gap: 0;
+  }
+
+  &__step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.4rem;
+    position: relative;
+
+    &:not(:last-child)::after {
+      content: '';
+      position: absolute;
+      top: 18px;
+      left: calc(50% + 18px);
+      width: calc(100% - 36px);
+      height: 2px;
+      background: $sand;
+      border: 1px solid color.adjust($sand, $lightness: -12%);
+
+      @media (max-width: $bp-sm) {
+        width: calc(100% - 28px);
+        left: calc(50% + 14px);
+      }
+    }
+
+    &--active:not(:last-child)::after,
+    &--done:not(:last-child)::after {
+      background: $terracotta;
+      border-color: $terracotta;
+    }
+  }
+
+  &__step-num {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.85rem;
+    font-weight: 700;
+    background: $white;
+    border: 2px solid color.adjust($sand, $lightness: -12%);
+    color: $wood;
+    transition: all $transition;
+    position: relative;
+    z-index: 1;
+
+    .wizard__step--active & { background: $terracotta; border-color: $terracotta; color: $white; }
+    .wizard__step--done &   { background: $green; border-color: $green; color: $white; }
+  }
+
+  &__step-label {
+    font-size: 0.72rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: $wood;
+    white-space: nowrap;
+
+    .wizard__step--active & { color: $terracotta; }
+    .wizard__step--done &   { color: $green; }
+
+    @media (max-width: $bp-sm) { display: none; }
+  }
+
+  &__panel { display: none; &.active { display: block; } }
+
+  &__nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 2rem;
+    gap: 1rem;
+  }
+
+  &__btn-back {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: $wood;
+    padding: 0.85rem 1.5rem;
+    border: 1.5px solid color.adjust($sand, $lightness: -12%);
+    border-radius: $radius-sm;
+    background: $white;
+    transition: all $transition;
+    cursor: pointer;
+
+    &:hover  { border-color: $green; color: $green; }
+    &:disabled { opacity: 0.4; cursor: not-allowed; }
+  }
+
+  &__btn-next {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: $white;
+    padding: 0.9rem 2rem;
+    background: $terracotta;
+    border-radius: $radius-sm;
+    border: none;
+    cursor: pointer;
+    transition: background $transition;
+    margin-left: auto;
+
+    &:hover:not(:disabled) { background: $terracotta-hover; }
+    &:disabled { opacity: 0.45; cursor: not-allowed; }
+  }
+}
+
+// ── Paso 1: Selector de tipo de habitación ─────────────────
+.room-selector {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-bottom: 2rem;
+
+  @media (max-width: $bp-sm) { grid-template-columns: 1fr; }
+}
+
+.room-option {
+  border: 2px solid $sand;
+  border-radius: $radius-sm;
+  padding: 1.5rem;
+  cursor: pointer;
+  transition: border-color $transition, box-shadow $transition;
+  background: $white;
+  text-align: left;
+
+  &.selected {
+    border-color: $terracotta;
+    box-shadow: 0 0 0 3px rgba($terracotta, 0.12);
+  }
+
+  &:hover:not(.selected) { border-color: color.adjust($sand, $lightness: -15%); }
+
+  &__type {
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: $terracotta;
+    margin-bottom: 0.4rem;
+  }
+
+  &__name { font-family: $font-serif; font-size: 1.15rem; color: $green; margin-bottom: 0.3rem; }
+
+  &__price {
+    font-size: 0.85rem;
+    color: $wood;
+    strong { color: $terracotta; }
+  }
+
+  // Visually hidden: accesible por teclado, invisible visualmente
+  &__input {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+}
+
+// ── Calendario ────────────────────────────────────────────
+.cal {
+  background: $white;
+  border: 1px solid $sand;
+  border-radius: $radius-sm;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.25rem;
+  }
+
+  &__month-title { font-family: $font-serif; font-size: 1.05rem; color: $green; text-transform: capitalize; }
+
+  &__nav {
+    background: none;
+    border: 1px solid $sand;
+    border-radius: $radius-sm;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: $wood;
+    transition: all $transition;
+
+    &:hover { border-color: $green; color: $green; }
+    &:disabled { opacity: 0.3; cursor: not-allowed; }
+  }
+
+  &__grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; }
+
+  &__dow {
+    font-size: 0.68rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: $wood;
+    text-align: center;
+    padding: 0.4rem 0;
+  }
+
+  &__day {
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.85rem;
+    color: $dark;
+    border-radius: 2px;
+    cursor: pointer;
+    transition: all $transition;
+    border: 1.5px solid transparent;
+    -webkit-user-select: none;
+    user-select: none;
+
+    &:hover:not(.cal__day--blocked):not(.cal__day--past):not(.cal__day--empty) {
+      background: rgba($terracotta, 0.1);
+      border-color: rgba($terracotta, 0.3);
+    }
+
+    &--empty   { cursor: default; }
+    &--past    { color: rgba($dark, 0.25); cursor: not-allowed; }
+
+    &--blocked {
+      color: rgba($dark, 0.25);
+      cursor: not-allowed;
+      background: repeating-linear-gradient(
+        135deg,
+        transparent, transparent 3px,
+        rgba($wood, 0.08) 3px, rgba($wood, 0.08) 6px
+      );
+    }
+
+    &--check-in  { background: $terracotta; color: $white; font-weight: 700; border-color: $terracotta; border-radius: 2px 0 0 2px; }
+    &--check-out { background: $terracotta; color: $white; font-weight: 700; border-color: $terracotta; border-radius: 0 2px 2px 0; }
+    &--in-range  { background: rgba($terracotta, 0.15); border-color: transparent; border-radius: 0; }
+
+    &--today {
+      font-weight: 700;
+      color: $terracotta;
+
+      &:not(.cal__day--check-in):not(.cal__day--check-out) {
+        border-color: rgba($terracotta, 0.4);
+      }
+    }
+  }
+
+  &__legend { display: flex; gap: 1.25rem; margin-top: 1rem; flex-wrap: wrap; }
+
+  &__legend-item { display: flex; align-items: center; gap: 0.4rem; font-size: 0.75rem; color: $wood; }
+
+  &__legend-dot {
+    width: 14px;
+    height: 14px;
+    border-radius: 2px;
+
+    &--selected { background: $terracotta; }
+    &--range    { background: rgba($terracotta, 0.2); border: 1px solid rgba($terracotta, 0.3); }
+    &--blocked  {
+      background: repeating-linear-gradient(
+        135deg,
+        transparent, transparent 3px,
+        rgba($wood, 0.15) 3px, rgba($wood, 0.15) 6px
+      );
+      border: 1px solid rgba($wood, 0.2);
+    }
+  }
+}
+
+// ── Resumen de fechas ──────────────────────────────────────
+.date-summary {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+
+  &__item {
+    flex: 1;
+    min-width: 140px;
+    background: $white;
+    border: 1px solid $sand;
+    border-radius: $radius-sm;
+    padding: 1rem 1.25rem;
+
+    span   { display: block; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: $wood; margin-bottom: 0.25rem; }
+    strong { font-size: 0.95rem; color: $green; }
+  }
+
+  &__item--nights {
+    background: $green;
+    border-color: $green;
+
+    span   { color: rgba($sand, 0.6); }
+    strong { font-family: $font-serif; font-size: 1.6rem; color: $cream; line-height: 1; }
+  }
+}
+
+// ── Paso 2: Formulario del huésped ────────────────────────
+.guest-form {
+  background: $white;
+  border: 1px solid $sand;
+  border-radius: $radius-sm;
+  padding: 2rem;
+
+  &__title { font-size: 1.1rem; color: $green; margin-bottom: 1.5rem; }
+
+  &__row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.25rem;
+    margin-bottom: 1.25rem;
+
+    @media (max-width: $bp-sm) { grid-template-columns: 1fr; }
+  }
+
+  &__field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    margin-bottom: 1.25rem;
+
+    label { font-size: 0.82rem; font-weight: 600; color: $wood; }
+
+    input, select, textarea {
+      width: 100%;
+      border: 1.5px solid $sand;
+      border-radius: $radius-sm;
+      padding: 0.8rem 1rem;
+      font-family: $font-sans;
+      font-size: 0.9rem;
+      color: $dark;
+      background: $white;
+      transition: border-color $transition, box-shadow $transition;
+      -webkit-appearance: none;
+      appearance: none;
+
+      &:focus {
+        outline: none;
+        border-color: $green;
+        box-shadow: 0 0 0 3px rgba($green, 0.1);
+      }
+    }
+
+    textarea { resize: vertical; min-height: 80px; }
+
+    .field-error {
+      font-size: 0.75rem;
+      color: #DC2626;
+      display: none;
+      &.visible { display: block; }
+    }
+
+    &.has-error input,
+    &.has-error select { border-color: #FCA5A5; }
+  }
+}
+
+// ── Paso 3: Resumen y confirmación ────────────────────────
+.booking-summary {
+  background: $white;
+  border: 1px solid $sand;
+  border-radius: $radius-sm;
+  overflow: hidden;
+  margin-bottom: 1.5rem;
+
+  &__header {
+    background: $green;
+    color: $cream;
+    padding: 1.5rem 2rem;
+
+    h3 { font-size: 1.1rem; color: $cream; margin-bottom: 0.25rem; }
+    p  { font-size: 0.85rem; color: rgba($sand, 0.7); }
+  }
+
+  &__body { padding: 1.5rem 2rem; }
+
+  &__row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid $sand;
+    font-size: 0.9rem;
+
+    &:last-child { border-bottom: none; }
+    span:first-child { color: $wood; }
+    span:last-child  { font-weight: 600; color: $dark; }
+  }
+
+  &__total {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 1.25rem 2rem;
+    background: $sand;
+    border-top: 2px solid color.adjust($sand, $lightness: -8%);
+  }
+
+  &__total-label  { font-family: $font-serif; font-size: 1.1rem; color: $green; font-weight: 700; }
+
+  &__total-amount {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: $terracotta;
+    font-family: $font-serif;
+
+    span { font-size: 0.85rem; color: $wood; font-weight: 400; font-family: $font-sans; margin-left: 0.25rem; }
+  }
+}
+
+.booking-confirm-btn {
+  width: 100%;
+  background: $terracotta;
+  color: $white;
+  font-size: 1rem;
+  font-weight: 700;
+  padding: 1.1rem;
+  border-radius: $radius-sm;
+  border: none;
+  cursor: pointer;
+  transition: background $transition, opacity $transition;
+
+  &:hover:not(:disabled) { background: $terracotta-hover; }
+  &:disabled { opacity: 0.45; cursor: not-allowed; }
+}
+
+.booking-whatsapp-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  width: 100%;
+  background: #25D366;
+  color: $white;
+  font-size: 0.95rem;
+  font-weight: 700;
+  padding: 1rem;
+  border-radius: $radius-sm;
+  border: none;
+  cursor: pointer;
+  margin-top: 0.75rem;
+  transition: background $transition;
+  text-decoration: none;
+
+  &:hover { background: #1DAA56; }
+  svg { width: 20px; height: 20px; }
+}
+
+.booking-success {
+  display: none;
+  text-align: center;
+  padding: 4rem 2rem;
+
+  &.visible { display: block; }
+
+  &__icon {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    background: rgba($green, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1.5rem;
+    color: $green;
+
+    svg { width: 40px; height: 40px; }
+  }
+
+  &__code {
+    display: inline-block;
+    font-family: monospace;
+    font-size: 1.1rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    background: $sand;
+    color: $green;
+    padding: 0.5rem 1.25rem;
+    border-radius: $radius-sm;
+    margin: 1rem 0;
+  }
+
+  h3 { font-size: 1.75rem; color: $green; margin-bottom: 0.75rem; }
+
+  p {
+    color: $wood;
+    font-size: 0.95rem;
+    margin-bottom: 1.5rem;
+    line-height: 1.65;
+    max-width: 480px;
+    margin-inline: auto;
+  }
+}
+
+.form-error-box {
+  display: none;
+  background: #FEF2F2;
+  border: 1px solid #FCA5A5;
+  color: #DC2626;
+  font-size: 0.82rem;
+  padding: 0.75rem 1rem;
+  border-radius: $radius-sm;
+  margin-bottom: 1rem;
+
+  &.visible { display: block; }
+}

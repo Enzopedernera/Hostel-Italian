@@ -1,0 +1,39 @@
+// ============================================================
+// HOSTEL ITALIAN — Variables SCSS
+// ============================================================
+
+// Paleta de colores
+$cream:            #FDFBF7;
+$sand:             #F0EBE1;
+$green:            #2A3B32;
+$green-light:      #3E574A;
+$terracotta:       #B85C38;
+$terracotta-hover: #9A4D2F;
+$wood:             #5C4033;
+$dark:             #1A1A1A;
+$white:            #FFFFFF;
+
+// Tipografía
+$font-serif: 'Playfair Display', Georgia, serif;
+$font-sans:  'Inter', system-ui, sans-serif;
+
+// Espaciado
+$section-py: clamp(4rem, 8vw, 7rem);
+$max-width:  1200px;
+$px:         clamp(1rem, 4vw, 2rem);
+
+// Bordes y radios
+$radius-sm:   2px;
+$radius-full: 9999px;
+
+// Sombras
+$shadow-sm: 0 1px 3px rgba(0,0,0,.06), 0 1px 2px rgba(0,0,0,.04);
+$shadow-md: 0 4px 16px rgba(0,0,0,.10);
+
+// Transiciones
+$transition: 0.25s ease;
+
+// Breakpoints
+$bp-sm: 480px;
+$bp-md: 768px;
+$bp-lg: 1024px;

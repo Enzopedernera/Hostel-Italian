@@ -1,0 +1,375 @@
+// ============================================================
+// HOSTEL ITALIAN — Reservation, Location, Reviews, Footer
+// ============================================================
+@use 'variables' as *;
+
+// ── Reservation ────────────────────────────────────────────
+.reservation {
+  padding-block: $section-py;
+  background: $sand;
+
+  &__card {
+    display: flex;
+    background: $white;
+    border-radius: $radius-sm;
+    overflow: hidden;
+    box-shadow: $shadow-md;
+
+    @media (max-width: $bp-md) { flex-direction: column; }
+  }
+
+  &__info {
+    background: $green;
+    color: $cream;
+    padding: 3rem 2.5rem;
+    width: 38%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+
+    @media (max-width: $bp-md) { width: 100%; }
+  }
+
+  &__info-title   { font-size: 1.75rem; color: $cream; margin-bottom: 0.75rem; }
+  &__info-desc    { font-size: 0.9rem; color: rgba($sand, 0.75); margin-bottom: 2.5rem; line-height: 1.65; }
+  &__info-details { display: flex; flex-direction: column; gap: 1.25rem; }
+
+  &__info-item {
+    border-bottom: 1px solid rgba($white, 0.1);
+    padding-bottom: 1.25rem;
+
+    &:last-child { border-bottom: none; padding-bottom: 0; }
+
+    span:first-child {
+      display: block;
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: rgba($sand, 0.5);
+      margin-bottom: 0.3rem;
+    }
+
+    span:last-child { font-size: 0.95rem; color: $cream; }
+  }
+
+  &__form-wrap {
+    flex: 1;
+    padding: 3rem 2.5rem;
+
+    @media (max-width: $bp-sm) { padding: 2rem 1.5rem; }
+  }
+
+  &__row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.25rem;
+    margin-bottom: 1.25rem;
+
+    @media (max-width: $bp-sm) { grid-template-columns: 1fr; }
+  }
+
+  &__field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    margin-bottom: 1.25rem;
+  }
+
+  label {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: $wood;
+  }
+
+  input[type="date"],
+  input[type="text"],
+  input[type="email"],
+  input[type="tel"],
+  select {
+    width: 100%;
+    border: 1.5px solid $sand;
+    border-radius: $radius-sm;
+    padding: 0.8rem 1rem;
+    font-family: $font-sans;
+    font-size: 0.9rem;
+    color: $dark;
+    background: $white;
+    transition: border-color $transition, box-shadow $transition;
+    -webkit-appearance: none;
+    appearance: none;
+
+    &:focus {
+      outline: none;
+      border-color: $green;
+      box-shadow: 0 0 0 3px rgba($green, 0.1);
+    }
+
+    &:disabled { background: #f5f5f5; color: #999; }
+  }
+
+  &__note  { font-size: 0.75rem; color: $wood; margin-top: 0.2rem; }
+
+  &__error {
+    display: none;
+    background: #FEF2F2;
+    border: 1px solid #FCA5A5;
+    color: #DC2626;
+    font-size: 0.82rem;
+    padding: 0.75rem 1rem;
+    border-radius: $radius-sm;
+    margin-bottom: 1rem;
+
+    &.visible { display: block; }
+  }
+
+  &__summary {
+    background: $cream;
+    border: 1px solid $sand;
+    border-radius: $radius-sm;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  &__summary-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.9rem;
+    color: $wood;
+    padding-bottom: 0.75rem;
+    margin-bottom: 0.75rem;
+    border-bottom: 1px solid $sand;
+
+    span:last-child { font-weight: 600; color: $dark; }
+  }
+
+  &__summary-total { display: flex; justify-content: space-between; align-items: baseline; }
+  &__total-label   { font-family: $font-serif; font-size: 1.05rem; color: $green; font-weight: 700; }
+
+  &__total-amount {
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: $terracotta;
+
+    span { font-size: 0.8rem; color: $wood; font-weight: 400; }
+  }
+
+  &__submit {
+    width: 100%;
+    background: $terracotta;
+    color: $white;
+    font-size: 1rem;
+    font-weight: 700;
+    padding: 1rem;
+    border-radius: $radius-sm;
+    transition: background $transition, opacity $transition;
+
+    &:hover:not(:disabled) { background: $terracotta-hover; }
+    &:disabled { opacity: 0.45; cursor: not-allowed; }
+  }
+
+  &__success {
+    display: none;
+    text-align: center;
+    padding: 4rem 2rem;
+
+    &.visible { display: block; }
+
+    svg { width: 72px; height: 72px; color: $green; margin: 0 auto 1.5rem; }
+    h3  { font-size: 1.75rem; color: $green; margin-bottom: 0.75rem; }
+    p   { color: $wood; font-size: 0.95rem; margin-bottom: 2rem; line-height: 1.65; }
+    button { color: $terracotta; font-weight: 600; text-decoration: underline; font-size: 0.9rem; cursor: pointer; }
+  }
+}
+
+// ── Location ───────────────────────────────────────────────
+.location {
+  padding-block: $section-py;
+  background: $cream;
+  border-bottom: 1px solid $sand;
+
+  &__grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    align-items: center;
+
+    @media (max-width: $bp-md) { grid-template-columns: 1fr; gap: 2.5rem; }
+  }
+
+  &__title { font-size: clamp(1.8rem, 4vw, 2.5rem); color: $green; margin-bottom: 1rem; }
+  &__desc  { font-size: 1rem; color: $wood; line-height: 1.7; margin-bottom: 2rem; }
+  &__details { display: flex; flex-direction: column; gap: 1.5rem; }
+
+  &__detail-item { display: flex; align-items: flex-start; gap: 1rem; }
+
+  &__detail-icon {
+    flex-shrink: 0;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: $sand;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: $terracotta;
+
+    svg { width: 20px; height: 20px; }
+  }
+
+  &__detail-title { font-family: $font-sans; font-size: 0.9rem; font-weight: 700; color: $green; margin-bottom: 0.2rem; }
+  &__detail-text  { font-size: 0.875rem; color: $wood; line-height: 1.55; }
+
+  &__map {
+    height: 400px;
+    border-radius: $radius-sm;
+    overflow: hidden;
+    border: 1px solid $sand;
+    box-shadow: $shadow-sm;
+
+    iframe { width: 100%; height: 100%; border: none; }
+
+    &-placeholder {
+      width: 100%;
+      height: 100%;
+      background: $sand;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0.75rem;
+      color: $wood;
+      font-size: 0.85rem;
+
+      svg { width: 40px; height: 40px; color: $terracotta; animation: bounce 1.8s ease-in-out infinite; }
+    }
+  }
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-8px); }
+}
+
+// ── Reviews ────────────────────────────────────────────────
+.reviews {
+  padding-block: $section-py;
+  background: $cream;
+
+  &__grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+
+    @media (max-width: $bp-lg) { grid-template-columns: repeat(2, 1fr); }
+    @media (max-width: $bp-sm) { grid-template-columns: 1fr; }
+  }
+
+  &__card {
+    background: $white;
+    border: 1px solid $sand;
+    border-radius: $radius-sm;
+    padding: 2rem;
+    box-shadow: $shadow-sm;
+    display: flex;
+    flex-direction: column;
+  }
+
+  &__stars {
+    display: flex;
+    gap: 0.2rem;
+    color: $terracotta;
+    margin-bottom: 1rem;
+
+    svg { width: 17px; height: 17px; fill: currentColor; }
+  }
+
+  &__text {
+    font-size: 0.9rem;
+    color: $wood;
+    font-style: italic;
+    line-height: 1.65;
+    flex: 1;
+    margin-bottom: 1.5rem;
+
+    &::before { content: '"'; }
+    &::after  { content: '"'; }
+  }
+
+  &__author-name    { font-size: 0.9rem; font-weight: 700; color: $green; }
+  &__author-country { font-size: 0.8rem; color: rgba($wood, 0.65); }
+}
+
+// ── Footer ─────────────────────────────────────────────────
+.footer {
+  background: $dark;
+  color: rgba($sand, 0.65);
+  padding-top: 4rem;
+  padding-bottom: 2rem;
+
+  &__grid {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr 1fr 1fr;
+    gap: 3rem;
+    padding-bottom: 3rem;
+    margin-bottom: 2rem;
+    border-bottom: 1px solid rgba($white, 0.07);
+
+    @media (max-width: $bp-lg) { grid-template-columns: 1fr 1fr; gap: 2rem; }
+    @media (max-width: $bp-sm) { grid-template-columns: 1fr; }
+  }
+
+  &__brand-name { font-family: $font-serif; font-size: 1.5rem; color: $white; margin-bottom: 0.75rem; }
+  &__brand-desc { font-size: 0.85rem; line-height: 1.65; margin-bottom: 1.25rem; }
+
+  &__social {
+    display: flex;
+    gap: 0.75rem;
+
+    a {
+      color: rgba($sand, 0.65);
+      transition: color $transition;
+      &:hover { color: $terracotta; }
+      svg { width: 20px; height: 20px; }
+    }
+  }
+
+  &__col-title {
+    font-family: $font-sans;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: $white;
+    margin-bottom: 1.25rem;
+  }
+
+  &__list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+
+    li { display: flex; align-items: center; gap: 0.5rem; font-size: 0.85rem; }
+    li svg { width: 15px; height: 15px; color: $terracotta; flex-shrink: 0; }
+    a { font-size: 0.85rem; transition: color $transition; &:hover { color: $white; } }
+  }
+
+  &__bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.78rem;
+
+    @media (max-width: $bp-sm) { flex-direction: column; gap: 0.5rem; text-align: center; }
+  }
+}
+
+// ── Animaciones de entrada ──────────────────────────────────
+.fade-up {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.55s ease, transform 0.55s ease;
+
+  &.visible { opacity: 1; transform: translateY(0); }
+}

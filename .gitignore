@@ -1,0 +1,10 @@
+# Sistema
+.DS_Store
+Thumbs.db
+
+# Build artifacts de Sass que no deben vivir fuera de /css
+scss/*.css
+scss/*.css.map
+
+# Dependencias (si en el futuro se agrega un build con npm)
+node_modules/

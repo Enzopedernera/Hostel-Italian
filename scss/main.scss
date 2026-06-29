@@ -1,0 +1,21 @@
+// ============================================================
+// HOSTEL ITALIAN — Archivo principal SCSS
+// Compilar con: sass scss/main.scss css/main.css --watch
+// ============================================================
+
+// Base
+@use 'variables' as *;
+@use 'base';
+@use 'navbar';
+@use 'hero';
+@use 'sections';
+@use 'bottom';
+@use 'utilities';
+
+// Páginas
+@use 'pages/shared';
+@use 'pages/habitaciones';
+@use 'pages/reservar';
+@use 'pages/servicios';
+@use 'pages/resenas';
+@use 'pages/ubicacion';

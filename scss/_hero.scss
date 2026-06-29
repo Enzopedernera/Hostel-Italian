@@ -1,0 +1,137 @@
+// ============================================================
+// HOSTEL ITALIAN — Hero
+// ============================================================
+@use 'variables' as *;
+
+.hero {
+  position: relative;
+  min-height: 100svh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+
+  &__bg {
+    position: absolute;
+    inset: 0;
+    background-image: url('../img/entradaalhostel.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+
+    &::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        to bottom,
+        rgba($green, 0.25) 0%,
+        rgba($green, 0.75) 100%
+      );
+    }
+  }
+
+  &__content {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    color: $cream;
+    padding-top: 5rem;
+    max-width: 860px;
+    padding-inline: $px;
+  }
+
+  &__eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgba($cream, 0.85);
+    margin-bottom: 1.5rem;
+
+    svg { width: 14px; height: 14px; }
+  }
+
+  &__title {
+    font-size: clamp(2.5rem, 7vw, 5rem);
+    font-weight: 700;
+    line-height: 1.1;
+    color: $cream;
+    margin-bottom: 1.25rem;
+    text-wrap: balance;
+
+    em {
+      font-style: italic;
+      color: rgba($sand, 0.95);
+    }
+  }
+
+  &__subtitle {
+    font-size: clamp(1rem, 2vw, 1.2rem);
+    font-weight: 300;
+    color: rgba($cream, 0.88);
+    max-width: 560px;
+    margin: 0 auto 2.5rem;
+  }
+
+  &__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    justify-content: center;
+  }
+
+  &__btn {
+    display: inline-block;
+    font-size: 1rem;
+    font-weight: 600;
+    padding: 1rem 2rem;
+    border-radius: $radius-sm;
+    transition: background $transition, color $transition, border-color $transition;
+
+    &--primary {
+      background: $terracotta;
+      color: $white;
+      &:hover { background: $terracotta-hover; }
+    }
+
+    &--ghost {
+      background: rgba($white, 0.12);
+      color: $white;
+      border: 1.5px solid rgba($white, 0.4);
+      -webkit-backdrop-filter: blur(6px);
+      backdrop-filter: blur(6px);
+      &:hover { background: rgba($white, 0.22); }
+    }
+  }
+
+  &__scroll {
+    position: absolute;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.4rem;
+    color: rgba($cream, 0.6);
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    animation: scrollBounce 2.2s ease-in-out infinite;
+  }
+
+  &__scroll-line {
+    width: 1px;
+    height: 48px;
+    background: linear-gradient(to bottom, rgba($cream, 0.7), transparent);
+  }
+}
+
+@keyframes scrollBounce {
+  0%, 100% { transform: translateX(-50%) translateY(0); }
+  50%       { transform: translateX(-50%) translateY(8px); }
+}

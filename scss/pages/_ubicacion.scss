@@ -1,0 +1,129 @@
+// ============================================================
+// HOSTEL ITALIAN — Página: Ubicación & Contacto
+// ============================================================
+@use 'sass:color';
+@use '../variables' as *;
+
+.location--page {
+  padding-block: $section-py;
+  background: $cream;
+  border-bottom: none;
+}
+
+// ── Formulario de contacto ─────────────────────────────────
+.contact {
+  padding-block: $section-py;
+  background: $sand;
+
+  &__grid {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 3rem;
+    align-items: start;
+
+    @media (max-width: $bp-md) { grid-template-columns: 1fr; }
+  }
+
+  &__channels { display: flex; flex-direction: column; gap: 1rem; }
+
+  &__channel {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    background: $white;
+    border: 1px solid color.adjust($sand, $lightness: -5%);
+    border-radius: $radius-sm;
+    padding: 1.25rem 1.5rem;
+    box-shadow: $shadow-sm;
+    transition: box-shadow $transition, transform $transition;
+
+    &:hover { box-shadow: $shadow-md; transform: translateY(-2px); }
+  }
+
+  &__ch-icon {
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+
+    svg { width: 20px; height: 20px; }
+
+    &--wa   { background: #E6F4EA; color: #25D366; }
+    &--mail { background: rgba($terracotta, 0.1); color: $terracotta; }
+    &--ig   { background: rgba($green, 0.1); color: $green; }
+  }
+
+  &__ch-label {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: $wood;
+    margin-bottom: 0.15rem;
+  }
+
+  &__ch-value { font-size: 0.9rem; font-weight: 600; color: $green; }
+
+  &__form {
+    background: $white;
+    border: 1px solid color.adjust($sand, $lightness: -5%);
+    border-radius: $radius-sm;
+    padding: 2.5rem;
+    box-shadow: $shadow-sm;
+
+    textarea {
+      width: 100%;
+      border: 1.5px solid $sand;
+      border-radius: $radius-sm;
+      padding: 0.8rem 1rem;
+      font-family: $font-sans;
+      font-size: 0.9rem;
+      color: $dark;
+      resize: vertical;
+      transition: border-color $transition, box-shadow $transition;
+
+      &:focus {
+        outline: none;
+        border-color: $green;
+        box-shadow: 0 0 0 3px rgba($green, 0.1);
+      }
+    }
+  }
+
+  &__form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.25rem;
+
+    @media (max-width: $bp-sm) { grid-template-columns: 1fr; }
+  }
+
+  &__submit {
+    width: 100%;
+    background: $terracotta;
+    color: $white;
+    font-size: 1rem;
+    font-weight: 700;
+    padding: 1rem;
+    border-radius: $radius-sm;
+    transition: background $transition, opacity $transition;
+    margin-top: 0.5rem;
+
+    &:hover:not(:disabled) { background: $terracotta-hover; }
+    &:disabled { opacity: 0.45; cursor: not-allowed; }
+  }
+
+  &__success {
+    margin-top: 1rem;
+    color: $green;
+    font-size: 0.9rem;
+    font-weight: 600;
+    padding: 0.75rem 1rem;
+    background: rgba($green, 0.07);
+    border-radius: $radius-sm;
+    border: 1px solid rgba($green, 0.2);
+  }
+}

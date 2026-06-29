@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Reservar — El Italian Hostel</title>
+  <meta name="description" content="Reservá tu lugar en El Italian Hostel, Villa La Angostura. Dormitorios y habitaciones privadas disponibles." />
+  <meta property="og:title" content="Reservar — El Italian Hostel" />
+  <meta property="og:description" content="Reservá tu lugar en El Italian Hostel, Villa La Angostura. Dormitorios y habitaciones privadas disponibles." />
+  <meta property="og:image" content="https://hostelitalian.com/img/entradaalhostel.jpg" />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://hostelitalian.com/page/reservar.html" />
+  <link rel="canonical" href="https://hostelitalian.com/page/reservar.html" />
+  <link rel="icon" type="image/svg+xml" href="../favicon.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,700;1,400;1,700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../css/main.css" />
+</head>
+<body>
+
+  <div id="header-placeholder"></div>
+
+  <main id="main-content">
+
+    <!-- PAGE HEADER -->
+    <section class="page-hero page-hero--short">
+      <div class="page-hero__bg page-hero__bg--reservar"></div>
+      <div class="page-hero__content">
+        <span class="page-hero__label">Tu estadía</span>
+        <h1 class="page-hero__title">Reservar</h1>
+        <p class="page-hero__desc">
+          Elegí tu habitación, seleccioná las fechas y confirmá en minutos.
+          Te contactamos para coordinar el pago.
+        </p>
+      </div>
+    </section>
+
+    <!-- WIZARD DE RESERVAS -->
+    <section class="wizard reservation--page">
+      <div class="container">
+
+        <!-- Indicador de pasos -->
+        <div class="wizard__steps" aria-label="Pasos de la reserva">
+          <div class="wizard__step wizard__step--active" id="step-dot-1">
+            <div class="wizard__step-num">1</div>
+            <span class="wizard__step-label">Habitación</span>
+          </div>
+          <div class="wizard__step" id="step-dot-2">
+            <div class="wizard__step-num">2</div>
+            <span class="wizard__step-label">Tus datos</span>
+          </div>
+          <div class="wizard__step" id="step-dot-3">
+            <div class="wizard__step-num">3</div>
+            <span class="wizard__step-label">Confirmar</span>
+          </div>
+        </div>
+
+        <!-- WIZARD FORM -->
+        <div id="reservation-wizard">
+
+          <!-- Error genérico -->
+          <div id="wiz-error" class="form-error-box" role="alert" aria-live="assertive"></div>
+
+          <!-- ── PASO 1: Tipo + Fechas ── -->
+          <div class="wizard__panel active" id="panel-1">
+
+            <div class="reservation__card reservation__card--flat">
+
+              <!-- Selector de tipo de habitación -->
+              <h2 class="wizard__section-title">
+                ¿Qué tipo de habitación querés?
+              </h2>
+
+              <div class="room-selector" role="group" aria-label="Tipo de habitación">
+                <label class="room-option selected" data-type="dorm">
+                  <input class="room-option__input" type="radio" name="room-type" value="dorm" checked />
+                  <div class="room-option__type">Compartido</div>
+                  <div class="room-option__name">Dormitorio</div>
+                  <div class="room-option__price">Desde <strong data-price="dorm">$25.000 ARS</strong> / noche por persona</div>
+                </label>
+                <label class="room-option" data-type="private">
+                  <input class="room-option__input" type="radio" name="room-type" value="private" />
+                  <div class="room-option__type">Privada</div>
+                  <div class="room-option__name">Habitación Privada</div>
+                  <div class="room-option__price">Desde <strong data-price="private">$65.000 ARS</strong> / noche</div>
+                </label>
+              </div>
+
+              <!-- Huéspedes (solo para dorm) -->
+              <div id="wiz-guests-wrap" class="wizard__guests-wrap">
+                <label for="wiz-guests">Cantidad de personas</label>
+                <select id="wiz-guests" name="guests">
+                  <option value="1">1 persona</option>
+                  <option value="2">2 personas</option>
+                  <option value="3">3 personas</option>
+                  <option value="4">4 personas</option>
+                  <option value="5">5 personas</option>
+                  <option value="6">6 personas</option>
+                </select>
+              </div>
+
+              <!-- Calendario -->
+              <h2 class="wizard__section-title wizard__section-title--sm">
+                ¿Cuándo llegás?
+              </h2>
+              <div id="cal-container"></div>
+              <p class="cal-hint" id="cal-hint">Hacé clic en el calendario para elegir tu fecha de llegada.</p>
+
+              <!-- Resumen de fechas seleccionadas -->
+              <div class="date-summary">
+                <div class="date-summary__item">
+                  <span>Llegada</span>
+                  <strong id="ds-checkin">—</strong>
+                </div>
+                <div class="date-summary__item">
+                  <span>Salida</span>
+                  <strong id="ds-checkout">—</strong>
+                </div>
+                <div class="date-summary__item date-summary__item--nights">
+                  <span>Noches</span>
+                  <strong id="ds-nights">0</strong>
+                </div>
+                <div class="date-summary__item date-summary__item--estimate" id="ds-estimate-wrap">
+                  <span>Total estimado</span>
+                  <strong id="ds-estimate">—</strong>
+                </div>
+              </div>
+
+            </div>
+          </div><!-- /panel-1 -->
+
+          <!-- ── PASO 2: Datos del huésped ── -->
+          <div class="wizard__panel" id="panel-2">
+            <div class="guest-form">
+              <h2 class="guest-form__title">Tus datos de contacto</h2>
+
+              <div class="guest-form__row">
+                <div class="guest-form__field">
+                  <label for="wiz-name">Nombre completo *</label>
+                  <input type="text" id="wiz-name" name="name" placeholder="Tu nombre completo" autocomplete="name" aria-required="true" />
+                  <span class="field-error"></span>
+                </div>
+                <div class="guest-form__field">
+                  <label for="wiz-phone">WhatsApp</label>
+                  <input type="tel" id="wiz-phone" name="phone" placeholder="+54 9 294 4XX-XXXX" autocomplete="tel" />
+                  <span class="field-error"></span>
+                </div>
+              </div>
+
+              <div class="guest-form__field">
+                <label for="wiz-email">Email</label>
+                <input type="email" id="wiz-email" name="email" placeholder="tu@email.com" autocomplete="email" />
+                <span class="field-error"></span>
+              </div>
+
+              <div class="guest-form__field">
+                <label for="wiz-notes">Notas adicionales (opcional)</label>
+                <textarea id="wiz-notes" name="notes" rows="3"
+                  placeholder="Hora estimada de llegada, requerimientos especiales, consultas…"></textarea>
+              </div>
+
+              <p class="wizard__required-note">
+                * Obligatorio. Necesitamos tu nombre y al menos un medio de contacto (email o WhatsApp) para confirmar la reserva.
+              </p>
+            </div>
+          </div><!-- /panel-2 -->
+
+          <!-- ── PASO 3: Resumen y confirmación ── -->
+          <div class="wizard__panel" id="panel-3">
+
+            <div class="booking-summary">
+              <div class="booking-summary__header">
+                <h3>Resumen de tu reserva</h3>
+                <p>Revisá los datos antes de confirmar</p>
+              </div>
+              <div class="booking-summary__body">
+                <div class="booking-summary__row">
+                  <span>Habitación</span>
+                  <span id="sum-room">—</span>
+                </div>
+                <div class="booking-summary__row">
+                  <span>Fechas</span>
+                  <span id="sum-dates">—</span>
+                </div>
+                <div class="booking-summary__row">
+                  <span>Noches</span>
+                  <span id="sum-nights">—</span>
+                </div>
+                <div class="booking-summary__row">
+                  <span>Huéspedes</span>
+                  <span id="sum-guests">—</span>
+                </div>
+                <div class="booking-summary__row">
+                  <span>Precio por noche</span>
+                  <span id="sum-price">—</span>
+                </div>
+                <div class="booking-summary__row">
+                  <span>Nombre</span>
+                  <span id="sum-name">—</span>
+                </div>
+                <div class="booking-summary__row">
+                  <span>Contacto</span>
+                  <span id="sum-contact">—</span>
+                </div>
+              </div>
+              <div class="booking-summary__total">
+                <span class="booking-summary__total-label">Total Estimado</span>
+                <span class="booking-summary__total-amount">
+                  <span id="sum-total">—</span>
+                  <span>ARS</span>
+                </span>
+              </div>
+            </div>
+
+            <button type="button" id="btn-confirm" class="booking-confirm-btn">
+              Confirmar y enviar por WhatsApp
+            </button>
+
+            <a id="btn-whatsapp" href="#" target="_blank" rel="noopener noreferrer" class="booking-whatsapp-btn">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                   stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.45 2 2 0 0 1 3.58 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L7.91 9.4a16 16 0 0 0 6.07 6.07l1.27-.78a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+              </svg>
+              Reenviar por WhatsApp (si no se abrió solo)
+            </a>
+
+            <p class="wizard__disclaimer">
+              Al confirmar, guardamos tu solicitud y se abre WhatsApp para enviarla
+              directamente al hostel. Te contactamos para coordinar el pago.
+              No se realiza ningún cobro automático.
+            </p>
+
+          </div><!-- /panel-3 -->
+
+          <!-- Nav buttons -->
+          <div class="wizard__nav">
+            <button type="button" id="wiz-back" class="wizard__btn-back" disabled>← Volver</button>
+            <button type="button" id="wiz-next" class="wizard__btn-next">Continuar</button>
+          </div>
+
+        </div><!-- /#reservation-wizard -->
+
+        <!-- Estado éxito -->
+        <div id="booking-success" class="booking-success">
+          <div class="booking-success__icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                 stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+              <polyline points="22 4 12 14.01 9 11.01"/>
+            </svg>
+          </div>
+          <h3>¡Solicitud recibida!</h3>
+          <div class="booking-success__code">—</div>
+          <p>
+            Tu reserva se envió por WhatsApp al hostel. Si no se abrió la
+            ventana automáticamente, usá el botón de abajo. Te confirmamos
+            disponibilidad y coordinamos el pago por ese medio.
+          </p>
+          <a id="btn-whatsapp-success" href="#" target="_blank" rel="noopener noreferrer" class="booking-whatsapp-btn">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.45 2 2 0 0 1 3.58 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L7.91 9.4a16 16 0 0 0 6.07 6.07l1.27-.78a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+            </svg>
+            Enviar por WhatsApp
+          </a>
+          <button type="button" id="booking-new" class="wizard__reset-btn">
+            Hacer otra reserva
+          </button>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <div id="footer-placeholder"></div>
+  <script type="module" src="../js/main.js"></script>
+</body>
+</html>

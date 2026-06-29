@@ -1,0 +1,117 @@
+// ============================================================
+// HOSTEL ITALIAN — Componentes compartidos entre páginas
+// page-hero y cta-strip se usan en todas las páginas internas
+// ============================================================
+@use 'sass:color';
+@use '../variables' as *;
+
+// ── Page Hero ──────────────────────────────────────────────
+.page-hero {
+  position: relative;
+  min-height: 52vh;
+  display: flex;
+  align-items: flex-end;
+  padding-bottom: 4rem;
+  padding-top: 7rem;
+  overflow: hidden;
+
+  &--short { min-height: 40vh; }
+
+  &__bg {
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+
+    &--habitaciones { background-image: url('../img/webp/habdoble3.webp'); }
+    &--servicios    { background-image: url('../img/patiointerno.jpg'); }
+    &--ubicacion    { background-image: url('../img/webp/lagoespejo1.webp'); }
+    &--reservar     { background-image: url('../img/entradaalhostel.jpg'); }
+    &--resenas      { background-image: url('../img/interior3.webp'); }
+
+    &::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        to bottom,
+        rgba($green, 0.3) 0%,
+        rgba($green, 0.82) 100%
+      );
+    }
+  }
+
+  &__content {
+    position: relative;
+    z-index: 1;
+    color: $cream;
+    max-width: $max-width;
+    margin-inline: auto;
+    padding-inline: $px;
+    width: 100%;
+  }
+
+  &__label {
+    display: inline-block;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: rgba($sand, 0.8);
+    margin-bottom: 0.6rem;
+  }
+
+  &__title {
+    font-size: clamp(2rem, 6vw, 3.5rem);
+    color: $cream;
+    margin-bottom: 0.75rem;
+    line-height: 1.1;
+  }
+
+  &__desc {
+    font-size: clamp(0.9rem, 1.5vw, 1.1rem);
+    color: rgba($cream, 0.82);
+    max-width: 540px;
+    font-weight: 300;
+    line-height: 1.65;
+  }
+}
+
+// ── CTA Strip ─────────────────────────────────────────────
+.cta-strip {
+  padding-block: 3.5rem;
+  background: $sand;
+  border-top: 1px solid color.adjust($sand, $lightness: -6%);
+
+  &__inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 2rem;
+    flex-wrap: wrap;
+  }
+
+  &__title {
+    font-family: $font-serif;
+    font-size: clamp(1.2rem, 2.5vw, 1.6rem);
+    color: $green;
+    margin-bottom: 0.3rem;
+  }
+
+  &__desc { font-size: 0.9rem; color: $wood; }
+
+  &__btn {
+    flex-shrink: 0;
+    background: $terracotta;
+    color: $white;
+    font-size: 0.95rem;
+    font-weight: 700;
+    padding: 0.9rem 2rem;
+    border-radius: $radius-sm;
+    white-space: nowrap;
+    transition: background $transition;
+
+    &:hover { background: $terracotta-hover; }
+  }
+}
