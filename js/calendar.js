@@ -130,15 +130,6 @@ export function createCalendar(container, opts = {}) {
         el.setAttribute('role', 'button');
         el.setAttribute('tabindex', '0');
         el.setAttribute('aria-label', `${day} de ${MONTHS_ES[month]}${isToday ? ', hoy' : ''}`);
-        el.addEventListener('click',      () => handleClick(dateStr));
-        el.addEventListener('mouseenter', () => handleHover(dateStr));
-        el.addEventListener('mouseleave', () => { hoverDate = null; });
-        el.addEventListener('keydown', e => {
-          if (e.key === 'Enter' || e.key === ' ') {
-            e.preventDefault();
-            handleClick(dateStr);
-          }
-        });
       } else {
         el.setAttribute('aria-disabled', 'true');
       }
@@ -194,12 +185,42 @@ export function createCalendar(container, opts = {}) {
     render();
   }
 
-  function handleHover(dateStr) {
-    if (checkIn && !checkOut) {
-      hoverDate = dateStr;
+  // ── Eventos via event delegation ─────────────────────────
+  // Los listeners van en el container (que nunca se reemplaza),
+  // no en cada celda. Así sobreviven a todos los render().
+
+  container.addEventListener('click', (e) => {
+    const dayEl = e.target.closest('.cal__day[data-date]');
+    if (!dayEl || dayEl.classList.contains('cal__day--past') || dayEl.classList.contains('cal__day--blocked')) return;
+    handleClick(dayEl.dataset.date);
+  });
+
+  container.addEventListener('mouseover', (e) => {
+    if (!checkIn || checkOut) return;
+    const dayEl = e.target.closest('.cal__day[data-date]');
+    const newDate = (dayEl && !dayEl.classList.contains('cal__day--past') && !dayEl.classList.contains('cal__day--blocked'))
+      ? dayEl.dataset.date
+      : null;
+    if (newDate !== hoverDate) {
+      hoverDate = newDate;
       render();
     }
-  }
+  });
+
+  container.addEventListener('mouseleave', () => {
+    if (hoverDate !== null) {
+      hoverDate = null;
+      render();
+    }
+  });
+
+  container.addEventListener('keydown', (e) => {
+    if (e.key !== 'Enter' && e.key !== ' ') return;
+    const dayEl = e.target.closest('.cal__day[data-date]');
+    if (!dayEl || dayEl.classList.contains('cal__day--past') || dayEl.classList.contains('cal__day--blocked')) return;
+    e.preventDefault();
+    handleClick(dayEl.dataset.date);
+  });
 
   function rangeHasBlocked(from, to) {
     const current = parseLocalDate(from);
