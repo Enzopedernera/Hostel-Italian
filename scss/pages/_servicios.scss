@@ -32,3 +32,64 @@
     }
   }
 }
+
+// ── Teaser de Actividades (imagen + texto) ──────────────────
+.services-activities {
+  padding-block: $section-py;
+  background: $cream;
+
+  &__card {
+    display: grid;
+    grid-template-columns: 1fr 1.2fr;
+    gap: clamp(1.5rem, 4vw, 3rem);
+    align-items: center;
+    background: $white;
+    border-radius: $radius-sm;
+    box-shadow: $shadow-md;
+    overflow: hidden;
+
+    @media (max-width: $bp-md) {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  &__media {
+    height: 100%;
+    min-height: 260px;
+
+    .activity-detail__placeholder { min-height: 260px; }
+  }
+
+  &__body {
+    padding: 2rem 2.5rem 2rem 0;
+
+    @media (max-width: $bp-md) {
+      padding: 0 1.5rem 2rem;
+    }
+  }
+
+  &__title {
+    font-family: $font-serif;
+    font-size: clamp(1.3rem, 2.5vw, 1.75rem);
+    color: $green;
+    margin: 0.4rem 0 0.75rem;
+  }
+
+  &__desc {
+    font-size: 0.95rem;
+    color: $wood;
+    line-height: 1.65;
+    margin-bottom: 1.25rem;
+  }
+
+  &__cta {
+    display: inline-block;
+    margin-top: 1.25rem;
+    font-weight: 700;
+    font-size: 0.9rem;
+    color: $terracotta;
+    transition: color $transition;
+
+    &:hover { color: $terracotta-hover; }
+  }
+}
