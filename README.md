@@ -1,4 +1,4 @@
-# El Italian Hostel — hostelitalian-vanilla
+# El Italian Hostel — hostelitalian
 
 Sitio web del Hostel El Italian, Villa La Angostura, Patagonia.
 Stack: HTML / SCSS / JS (ES Modules).
