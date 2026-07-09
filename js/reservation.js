@@ -10,7 +10,7 @@ import { createCalendar }                        from './calendar.js';
 import { getBlockedDates, isAvailable, calcTotal,
          saveReservation, getConfig }             from './storage.js';
 
-export function initReservation() {
+export async function initReservation() {
   const wizard = document.getElementById('reservation-wizard');
   if (!wizard) return;
 
@@ -73,7 +73,7 @@ export function initReservation() {
   // ── Inicializar calendario ──────────────────────────────
 
   if (calContainer) {
-    const blocked = getBlockedDates(booking.roomType);
+    const blocked = await getBlockedDates(booking.roomType);
     cal = createCalendar(calContainer, {
       blockedDates: blocked,
       onChange({ checkIn, checkOut }) {
@@ -87,7 +87,7 @@ export function initReservation() {
 
   // ── Tipo de habitación ──────────────────────────────────
 
-  function applyRoomSelection(opt) {
+  async function applyRoomSelection(opt) {
     roomOptions.forEach(o => o.classList.remove('selected'));
     opt.classList.add('selected');
     booking.roomType = opt.dataset.type;
@@ -103,7 +103,7 @@ export function initReservation() {
     booking.checkOut = null;
     cal?.reset();
     if (cal) {
-      const newBlocked = getBlockedDates(booking.roomType);
+      const newBlocked = await getBlockedDates(booking.roomType);
       cal.setBlockedDates(newBlocked);
     }
     updateDateSummary();
@@ -190,8 +190,8 @@ export function initReservation() {
   }
 
   if (btnNext) {
-    btnNext.addEventListener('click', () => {
-      if (!validateStep(currentStep)) return;
+    btnNext.addEventListener('click', async () => {
+      if (!(await validateStep(currentStep))) return;
       goToStep(currentStep + 1);
     });
   }
@@ -204,7 +204,7 @@ export function initReservation() {
 
   // ── Validación por paso ─────────────────────────────────
 
-  function validateStep(step) {
+  async function validateStep(step) {
     hideError();
 
     if (step === 1) {
@@ -217,7 +217,7 @@ export function initReservation() {
         showError(`La estadía mínima es de ${config.minNights || 1} noche/s.`);
         return false;
       }
-      if (!isAvailable(booking.checkIn, booking.checkOut, booking.roomType, booking.guests)) {
+      if (!(await isAvailable(booking.checkIn, booking.checkOut, booking.roomType, booking.guests))) {
         showError('Lo sentimos, esas fechas no están disponibles para ese tipo de habitación.');
         return false;
       }
@@ -348,7 +348,7 @@ export function initReservation() {
   // para que la notificación real (WhatsApp) siempre se dispare.
 
   if (btnConfirm) {
-    btnConfirm.addEventListener('click', () => {
+    btnConfirm.addEventListener('click', async () => {
       btnConfirm.disabled     = true;
       btnConfirm.textContent  = 'Guardando…';
 
@@ -356,7 +356,7 @@ export function initReservation() {
         booking.roomType, booking.checkIn, booking.checkOut, booking.guests
       );
 
-      const saved = saveReservation({
+      const saved = await saveReservation({
         roomType:      booking.roomType,
         checkIn:       booking.checkIn,
         checkOut:      booking.checkOut,
@@ -370,29 +370,27 @@ export function initReservation() {
         notes:         booking.notes,
       });
 
-      setTimeout(() => {
-        if (saved && success) {
-          const codeEl = success.querySelector('.booking-success__code');
-          if (codeEl) codeEl.textContent = saved.code;
+      if (saved && success) {
+        const codeEl = success.querySelector('.booking-success__code');
+        if (codeEl) codeEl.textContent = saved.code;
 
-          // Disparar el envío por WhatsApp como parte de "confirmar".
-          // Si el navegador bloquea el popup, el botón de respaldo
-          // dentro de la pantalla de éxito sigue disponible.
-          if (btnWa?.href) {
-            const waWindow = window.open(btnWa.href, '_blank', 'noopener,noreferrer');
-            if (!waWindow) {
-              showError('Guardamos tu reserva, pero no pudimos abrir WhatsApp automáticamente. Usá el botón de abajo para enviarla.');
-            }
+        // Disparar el envío por WhatsApp como parte de "confirmar".
+        // Si el navegador bloquea el popup, el botón de respaldo
+        // dentro de la pantalla de éxito sigue disponible.
+        if (btnWa?.href) {
+          const waWindow = window.open(btnWa.href, '_blank', 'noopener,noreferrer');
+          if (!waWindow) {
+            showError('Guardamos tu reserva, pero no pudimos abrir WhatsApp automáticamente. Usá el botón de abajo para enviarla.');
           }
-
-          wizard.style.display = 'none';
-          success.classList.add('visible');
-        } else if (!saved) {
-          btnConfirm.disabled    = false;
-          btnConfirm.textContent = 'Confirmar y enviar por WhatsApp';
-          showError('No se pudo guardar la reserva. Por favor intentá de nuevo o usá el botón de WhatsApp.');
         }
-      }, 800);
+
+        wizard.style.display = 'none';
+        success.classList.add('visible');
+      } else {
+        btnConfirm.disabled    = false;
+        btnConfirm.textContent = 'Confirmar y enviar por WhatsApp';
+        showError('No se pudo guardar la reserva. Por favor intentá de nuevo o usá el botón de WhatsApp.');
+      }
     });
   }
 

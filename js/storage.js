@@ -1,12 +1,14 @@
 // ============================================================
 // HOSTEL ITALIAN — storage.js
-// Capa de persistencia usando localStorage.
-// Gestiona reservas, disponibilidad y configuración.
+// Capa de persistencia. Las reservas viven en Supabase (base
+// compartida entre todos los visitantes); la configuración
+// (precios/capacidad/contacto) sigue siendo local, no sensible.
 // ============================================================
 
+import { supabase } from './supabaseClient.js';
+
 const KEYS = {
-  RESERVATIONS: 'hi_reservations',
-  CONFIG:       'hi_config',
+  CONFIG: 'hi_config',
 };
 
 // Configuración por defecto (editable desde el código)
@@ -27,16 +29,6 @@ const DEFAULT_CONFIG = {
 };
 
 // ── Helpers internos ─────────────────────────────────────
-
-function genId() {
-  if (typeof crypto !== 'undefined' && crypto.randomUUID) {
-    return crypto.randomUUID();
-  }
-  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
-    const r = Math.random() * 16 | 0;
-    return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);
-  });
-}
 
 function parseDate(str) {
   // Evitar problemas de timezone: parsear como fecha local
@@ -70,51 +62,68 @@ export function getConfig() {
 }
 
 // ── Reservas ─────────────────────────────────────────────
+// Backend: tabla `reservations` en Supabase (ver
+// supabase/migrations/0001_reservations.sql). El frontend público
+// solo puede insertar; para disponibilidad lee la vista
+// `public_availability`, que no expone datos personales.
 
-export function getReservations() {
-  try {
-    const raw = localStorage.getItem(KEYS.RESERVATIONS);
-    return raw ? JSON.parse(raw) : [];
-  } catch {
+/**
+ * Reservas activas (no canceladas), solo campos necesarios para
+ * calcular disponibilidad. Devuelve [] si falla la consulta.
+ */
+async function getAvailabilityRows() {
+  const { data, error } = await supabase
+    .from('public_availability')
+    .select('room_type, check_in, check_out, guests, status');
+
+  if (error) {
+    console.error('Error consultando disponibilidad:', error.message);
     return [];
   }
+
+  return data.map(r => ({
+    roomType: r.room_type,
+    checkIn:  r.check_in,
+    checkOut: r.check_out,
+    guests:   r.guests,
+    status:   r.status,
+  }));
 }
 
-export function saveReservation(data) {
-  const reservations = getReservations();
-  const id = genId();
+/**
+ * Guarda una reserva nueva en Supabase. `data` usa las mismas
+ * claves que armaba el wizard (roomType, checkIn, checkOut, nights,
+ * guests, pricePerNight, totalPrice, guestName, guestEmail,
+ * guestPhone, notes). Devuelve la reserva creada o null si falla.
+ */
+export async function saveReservation(data) {
   const code = 'HI-' + Date.now().toString(36).toUpperCase().slice(-6);
 
-  const reservation = {
-    id,
-    code,
-    createdAt: new Date().toISOString(),
-    status:    'pending',
-    ...data,
-  };
+  const { data: row, error } = await supabase
+    .from('reservations')
+    .insert({
+      code,
+      room_type:       data.roomType,
+      check_in:        data.checkIn,
+      check_out:       data.checkOut,
+      nights:          data.nights,
+      guests:          data.guests,
+      price_per_night: data.pricePerNight,
+      total_price:     data.totalPrice,
+      guest_name:      data.guestName,
+      guest_email:     data.guestEmail || null,
+      guest_phone:     data.guestPhone || null,
+      notes:           data.notes || null,
+    })
+    .select()
+    .single();
 
-  reservations.push(reservation);
-
-  try {
-    localStorage.setItem(KEYS.RESERVATIONS, JSON.stringify(reservations));
-    return reservation;
-  } catch {
+  if (error) {
+    console.error('Error guardando la reserva:', error.message);
     return null;
   }
-}
 
-export function getReservationById(id) {
-  return getReservations().find(r => r.id === id) || null;
-}
-
-export function deleteReservation(id) {
-  const updated = getReservations().filter(r => r.id !== id);
-  try {
-    localStorage.setItem(KEYS.RESERVATIONS, JSON.stringify(updated));
-    return true;
-  } catch {
-    return false;
-  }
+  return { id: row.id, code: row.code, ...data };
 }
 
 // ── Disponibilidad ────────────────────────────────────────
@@ -130,11 +139,11 @@ export function deleteReservation(id) {
  * capacidad total — así varias reservas distintas pueden convivir en
  * las mismas fechas mientras queden camas libres.
  */
-export function isAvailable(checkIn, checkOut, roomType, guests = 1) {
+export async function isAvailable(checkIn, checkOut, roomType, guests = 1) {
   const config      = getConfig();
   const capacity     = config.capacity[roomType] ?? 1;
-  const reservations = getReservations().filter(
-    r => r.roomType === roomType && r.status !== 'cancelled'
+  const reservations = (await getAvailabilityRows()).filter(
+    r => r.roomType === roomType
   );
 
   const overlapping = reservations.filter(r =>
@@ -160,12 +169,12 @@ export function isAvailable(checkIn, checkOut, roomType, guests = 1) {
  * cuando la suma de huéspedes ya reservados ese día alcanza la
  * capacidad total de camas.
  */
-export function getBlockedDates(roomType) {
+export async function getBlockedDates(roomType) {
   const config   = getConfig();
   const capacity = config.capacity[roomType] ?? 1;
   const blocked  = new Set();
-  const reservations = getReservations().filter(
-    r => r.roomType === roomType && r.status !== 'cancelled'
+  const reservations = (await getAvailabilityRows()).filter(
+    r => r.roomType === roomType
   );
 
   if (capacity <= 1) {
